@@ -178,4 +178,32 @@ public class InsertApp {
 
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/////////////////////////////////////////////////////////////////////
 
+public class Main {
 
+public void selectAll(){
+        String sql = "SELECT movie_ID, movie_Name, movie_Actor, movie_Actress, movie_Director, movie_releasedate FROM movies_table";
+        
+        try (Connection conn = this.connect();
+             Statement stmt  = conn.createStatement();
+             ResultSet rs    = stmt.executeQuery(sql)){
+            
+            while (rs.next()) {
+                System.out.println(rs.getInt("movie_ID") +  "\t" + 
+                                   rs.getString("movie_Name") + "\t" +
+                                   rs.getString("movie_Actor") + "\t" +
+                                   rs.getString("movie_Actress") + "\t" +
+                                   rs.getString("movie_Director") + "\t" +
+                                   rs.getString("movie_releasedate"));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+ 
+  public static void main(String[] args) {
+        createNewTable();
+    }
+ }
+    
+///////////////////////////////////////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
