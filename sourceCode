@@ -32,3 +32,150 @@ SELECT * FROM moviesdatabase.movies_table WHERE movie_Actor = "Mahesh Babu";
 SELECT * FROM moviesdatabase.movies_table WHERE movie_Director = "S S Rajamouli";
 
 SELECT * FROM moviesdatabase.movies_table WHERE movie_releasedate = "2022";
+
+////////////////////////////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+Sample code to Connect database using JAVA:
+
+package net.sqlitetutorial;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class Connect {
+    public static void connect() {
+        Connection conn = null;
+        try {
+            String url = "jdbc:sqlite:C:/sqlite/sqlitedb/chinook.db";
+            conn = DriverManager.getConnection(url);
+            
+            System.out.println("Connection to SQLite has been established successfully.");
+            
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+    }
+    public static void main(String[] args) {
+        connect();
+    }
+}
+
+/////////////////////////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+To create a new SQLite DataBase
+
+public class Main {
+
+    public static void createNewDatabase(String fName) {
+
+        String url = "jdbc:sqlite:C:/sqlite/sqlitedb/" + fName;
+
+        try (Connection conn = DriverManager.getConnection(url)) {
+            if (conn != null) {
+                DatabaseMetaData meta = conn.getMetaData();
+                System.out.println("The driver name is " + meta.getDriverName());
+                System.out.println("A new database has been created.");
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) {
+        createNewDatabase("moviesdatabase.db");
+    }
+}
+
+////////////////////////////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+To create a new table:
+
+public class Main {
+
+    public static void createNewTable() {
+        String url = "jdbc:sqlite:C://sqlite/sqlitedb/moviesdatabase.db";
+       
+        String sql = "CREATE TABLE IF NOT EXISTS movies_table (\n"
+                + "	movie_ID integer PRIMARY KEY,\n"
+                + "	movie_Name text NOT NULL,\n"
+                + " movie_Actor text NOT NULL,\n"
+                + " movie_Actress text NOT NULL,\n"
+                + " movie_Director text NOT NULL,\n"
+                + " movie_releasedate text NOT NULL,\n"
+                + ");";
+        
+        try (Connection conn = DriverManager.getConnection(url);
+                Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) {
+        createNewTable();
+    }
+
+}
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/////////////////////////////////////////////////////////////////////
+
+Insert raw data into movies_table:
+
+public class InsertApp {
+
+    private Connection connect() {
+        String url = "jdbc:sqlite:C://sqlite/sqlitedb/moviesdatabase.db";
+        Connection conn = null;
+        try {
+            conn = DriverManager.getConnection(url);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return conn;
+    }
+
+    public void insert(String movieName, String actorName, String actressName, String directorName, String releaseDate) {
+        String sql = "INSERT INTO movies_table(movie_Name,movie_Actor,movie_Actress,movie_Director,movie_releasedate) VALUES(?,?,?,?,?)";
+
+        try (Connection conn = this.connect();
+                PreparedStatement cv = conn.prepareStatement(sql)) {
+                
+            cv.setString(1, movieName);
+            cv.setString(2, actorName);
+            cv.setString(3, actressName);
+            cv.setString(4, directorName);
+            cv.setString(5, releaseDate);
+            cv.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) {
+
+        InsertApp app = new InsertApp();
+      
+        app.insert('Srimanthudu', 'Mahesh Babu', 'Shruti Haasan', 'Koratala Shiva', '2015');
+        app.insert('Chatrapathi', 'Prabhas', 'Shreya', 'S S Rajamouli', '2008');
+        app.insert('Athadu', 'Mahesh Babu', 'Thrisha', 'Thrivikram', '2005');
+        app.insert('Eega', 'Nani', 'Samantha', 'S S Rajamouli', '2012');
+        app.insert('RRR', 'NTR, Ram Charan', 'Alia Bhat', 'S S Rajamouli', '2022');
+        app.insert('Legand', 'Balakrisha', 'Sonal Chauhan', 'Boyapati Srinu', '2014');
+    }
+
+}
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/////////////////////////////////////////////////////////////////////
+
+
